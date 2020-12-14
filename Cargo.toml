@@ -1,0 +1,13 @@
+[package]
+name = "skottie-rs"
+version = "0.1.0"
+authors = ["Jef <jackefransham@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+gl = "0.14"
+glutin = { version = "0.25", features = ["wayland"] }
+clap = "2.33"
+skia-safe = { path = "../rust-skia/skia-safe/", features = ["gl", "wayland", "lottie"] }
