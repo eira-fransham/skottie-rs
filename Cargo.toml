@@ -7,7 +7,11 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+either = "1.6"
 gl = "0.14"
 glutin = { version = "0.25", features = ["wayland"] }
 clap = "2.33"
-skia-safe = { path = "../rust-skia/skia-safe/", features = ["gl", "wayland", "lottie"] }
+skia-safe = { path = "../rust-skia/skia-safe/", features = ["gl", "wayland", "lottie", "nightly"], default_features = false }
+
+[profile.release]
+lto = "thin"

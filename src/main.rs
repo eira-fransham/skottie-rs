@@ -1,6 +1,7 @@
 extern crate skia_safe as skia;
 
 use clap::{App, Arg};
+use either::Either;
 use glutin::dpi::LogicalSize;
 #[cfg(windows)]
 use glutin::platform::windows::WindowBuilderExtWindows;
@@ -12,7 +13,7 @@ use glutin::{
 };
 use skia::{
     gpu::{gl::FramebufferInfo, BackendRenderTarget, SurfaceOrigin},
-    Color, ColorType, Paint, PaintStyle, Path, Surface,
+    ColorType, Surface,
 };
 use std::{convert::TryInto, time};
 
@@ -108,12 +109,25 @@ fn main() {
 
     let num_frames = 1000;
     let mut times = Vec::with_capacity(num_frames);
-    let mut dt: f32 = 0.;
     times.push(now - last);
 
     last = now;
 
-    let mut animation = skia::animation::Animation::open(filename).expect("Failed to open file");
+    let mut file = std::fs::File::open(filename).unwrap();
+    let mut to_render = match filename
+        .extension()
+        .map(|e| e.to_string_lossy().to_ascii_lowercase())
+        .as_ref()
+        .map(|s| &s[..])
+    {
+        Some("json") | Some("lottie") => skia::animation::Animation::read(&mut file)
+            .map(Either::Left)
+            .expect("Failed to open lottie file"),
+        Some("svg") => skia::svg::SvgDom::read(&mut file)
+            .map(Either::Right)
+            .expect("Failed to open lottie file"),
+        other => panic!("Unrecognized filetype: {:?}", other),
+    };
 
     event_loop.run(move |event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
@@ -154,19 +168,27 @@ fn main() {
                 surface = create_surface(&gl_context, &fb_info, &mut gr_context);
             }
             Event::RedrawRequested(_) => {
-                surface.canvas().clear(0xff_ff_ff_ff);
+                if let Either::Left(animation) = &mut to_render {
+                    let dur = animation.duration();
+                    animation.seek_time::<()>((now - start).as_secs_f64() % dur);
+                }
 
-                let dur = animation.duration();
-                animation.seek_time::<()>((now - start).as_secs_f64() % dur);
+                {
+                    let canvas = surface.canvas();
+                    canvas.clear(0xff_ff_ff_ff);
 
-                animation.render(surface.canvas(), None);
+                    match &to_render {
+                        Either::Left(animation) => animation.render(canvas, None),
+                        Either::Right(svg) => svg.render(canvas),
+                    }
 
-                surface.canvas().flush();
+                    canvas.flush();
+                }
+
                 gl_context.swap_buffers().unwrap();
 
                 now = time::Instant::now();
                 let this_dt = now - last;
-                dt = this_dt.as_secs_f32();
                 times.push(this_dt);
                 last = now;
             }

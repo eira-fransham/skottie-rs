@@ -179,9 +179,9 @@ checksum = "7477065d45a8fe57167bf3cf8bcd3729b54cfcb81cca49bda2d038ea89ae82ca"
 
 [[package]]
 name = "clang-sys"
-version = "1.0.3"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0659001ab56b791be01d4b729c44376edc6718cf389a502e579b77b758f3296c"
+checksum = "fa785e9017cb8e8c8045e3f096b7d1ebc4d7337cceccdca8d678a27f788ac133"
 dependencies = [
  "glob",
  "libc",
@@ -430,6 +430,12 @@ name = "downcast-rs"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
+
+[[package]]
+name = "either"
+version = "1.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 
 [[package]]
 name = "env_logger"
@@ -1291,6 +1297,7 @@ version = "0.36.0"
 dependencies = [
  "bindgen",
  "cc",
+ "clang-sys",
  "flate2",
  "heck",
  "regex",
@@ -1306,6 +1313,7 @@ version = "0.36.0"
 dependencies = [
  "bitflags",
  "lazy_static",
+ "libc",
  "skia-bindings",
 ]
 
@@ -1314,6 +1322,7 @@ name = "skottie-rs"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "either",
  "gl",
  "glutin",
  "skia-safe",
