@@ -11,7 +11,7 @@ either = "1.6"
 gl = "0.14"
 glutin = { version = "0.25", features = ["wayland"] }
 clap = "2.33"
-skia-safe = { path = "../rust-skia/skia-safe/", features = ["gl", "wayland", "lottie", "nightly"], default_features = false }
+skia-safe = { git = "https://github.com/Vurich/rust-skia.git", branch = "skip-download-test", features = ["gl", "wayland", "lottie", "nightly"], default_features = false }
 
 [profile.release]
-lto = "thin"
+lto = false

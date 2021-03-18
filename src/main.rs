@@ -96,7 +96,7 @@ fn main() {
             &skia::SurfaceProps::with_options(Default::default(), skia::PixelGeometry::RGBH),
         )
         .unwrap()
-    };
+    }
 
     let mut surface = create_surface(&gl_context, &fb_info, &mut gr_context);
     let sf = gl_context.window().scale_factor() as f32;
